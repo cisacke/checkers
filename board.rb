@@ -46,3 +46,9 @@ class Board
   end
 
 end
+
+class NilClass
+  def to_s
+    "-"
+  end
+end
