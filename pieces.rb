@@ -53,23 +53,30 @@ class Piece
 
   def perform_moves!(move_sequence, board_type)
     if move_sequence.length == 1
-      return true if (board_type[self.pos].perform_jump(move_sequence[0]) ||
+      unless (board_type[self.pos].perform_jump(move_sequence[0]) ||
       board_type[self.pos].perform_slide(move_sequence[0]))
-      return false
+        raise StandardError.new "This is an invalid move"
+      end
     else
 
       @start_pos = self.pos
       move_sequence.each do |move|
-        return false unless board_type[@start_pos].perform_jump(move)
+        if !board_type[@start_pos].perform_jump(move)
+          StandardError.new "This is an invalid move"
+        end
         @start_pos = move
       end
     end
-    true
   end
 
   def valid_move_seq?(move_sequence)
     dup_board = board.dup
+    begin
     perform_moves!(move_sequence, dup_board)
+    rescue StandardError
+      return false
+    end
+    true
   end
 
   def forward_direction

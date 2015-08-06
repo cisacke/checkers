@@ -22,12 +22,6 @@ class Game
 
       begin
         @start_pos = prompt_start
-      rescue StandardError => e
-        puts e
-        retry
-      end
-
-      begin
         move_sequence = prompt_end
       rescue StandardError => e
         puts e
@@ -35,7 +29,7 @@ class Game
       end
 
       board[@start_pos].perform_moves(move_sequence, board)
-      # switch_players!
+
       current_player == :white ? @current_player = :black : @current_player = :white
 
     end
