@@ -9,12 +9,16 @@ class Piece
     @king = false
   end
 
-  def perform_slide
+  def perform_slide(end_pos)
 
   end
 
-  def perform_jump
+  def perform_jump(end_pos)
 
+  end
+
+  def forward_direction
+    color == :white ? 1 : -1
   end
 
 
