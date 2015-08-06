@@ -31,17 +31,26 @@ class Piece
     [[forward_direction, 1], [forward_direction, -1]].each do |delta|
       check_pos = [delta[0] + x, delta[1] + y]
       if valid?(check_pos) && check_pos == end_pos && self[end_pos].nil?
-        # move piece
-        # maybe_promote
-      else
-        # raise error: invalid move
+        board.move(self.pos, end_pos)
+        return
       end
+      raise "Cannot perform this move"
     end
 
   end
 
   def perform_jump(end_pos)
-
+    x, y = pos
+    [[forward_direction + 1, 2], [forward_direction + 1, -2]].each do |delta|
+      check_pos = [delta[0] + x, delta[1] + y]
+      jumped_pos = [forward_direction + x, forward_direction + y]
+      if valid?(check_pos) && check_pos == end_pos && self[end_pos].nil? &&
+        self[jumped_pos].color != color
+        puts "valid move"
+      else
+        puts "invalid move"
+      end
+    end
   end
 
   def forward_direction
