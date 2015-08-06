@@ -51,12 +51,27 @@ class Piece
     true
   end
 
-  def perform_moves!(move_sequence) #array of arrays, not including start pos
+  def perform_moves!(move_sequence, new_board)
+    if move_sequence.length == 1
+      new_board[self.pos].perform_jump(move_sequence[0])
+      new_board[self.pos].perform_slide(move_sequence[0])
+    else
+      start_pos = self.pos
+      # p "start_pos #{start_pos}"
+      move_sequence.each do |move|
+        # p "move #{move}"
+        # p "start_pos2 #{start_pos}"
+        return false unless new_board[start_pos].perform_jump(move)
+        start_pos = move
+        # p "start_pos3 #{start_pos}"
+      end
+    end
 
   end
 
-  def valid_move_seq?
-    
+  def valid_move_seq?(move_sequence)
+    new_board = board.dup
+    perform_moves!(move_sequence, new_board)
   end
 
   def forward_direction
