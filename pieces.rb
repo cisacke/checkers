@@ -52,7 +52,10 @@ class Piece
     check_pos.all? { |el| el.between?(0, 7)}
   end
 
-
+  def to_s
+    return "W" if color == :white
+    return "B" if color == :black
+  end
 
 
 end

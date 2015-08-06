@@ -38,4 +38,11 @@ class Board
     piece.pos = end_pos
   end
 
+  def display
+    grid.each do |row|
+      puts row.join(" ")
+    end
+    nil
+  end
+
 end
