@@ -51,6 +51,14 @@ class Piece
     true
   end
 
+  def perform_moves!(move_sequence) #array of arrays, not including start pos
+
+  end
+
+  def valid_move_seq?
+    
+  end
+
   def forward_direction
     color == :white ? 1 : -1
   end

@@ -11,6 +11,7 @@ class Game
   def play
 
     loop do
+      board.populate_grid
       board.display
       start_pos, end_pos = prompt
       p start_pos

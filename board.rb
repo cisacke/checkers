@@ -6,7 +6,6 @@ class Board
 
   def initialize
     @grid = Array.new(8) { Array.new(8) }
-    populate_grid
   end
 
   def populate_grid
@@ -48,6 +47,20 @@ class Board
     nil
   end
 
+  def pieces
+    grid.flatten.compact
+  end
+
+  def dup
+    new_board = Board.new
+
+    pieces.each do |piece|
+      new_board[piece.pos] = Piece.new(new_board, piece.pos)
+    end
+    
+    new_board
+  end
+
 end
 
 class NilClass
@@ -55,7 +68,3 @@ class NilClass
     "-"
   end
 end
-#
-# b = Board.new
-# b.populate_grid
-# b.display
