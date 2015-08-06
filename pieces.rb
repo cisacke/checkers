@@ -5,8 +5,8 @@ class Piece
   attr_reader :board
   attr_accessor :pos, :color, :king
 
-  def initialize(board, pos)
-    @color = pos[0].between?(0, 3) ? :white : :black
+  def initialize(board, pos, color)
+    @color = color
     @board = board
     @pos = pos
     @king = false
@@ -51,27 +51,25 @@ class Piece
     true
   end
 
-  def perform_moves!(move_sequence, new_board)
+  def perform_moves!(move_sequence, board_type)
     if move_sequence.length == 1
-      new_board[self.pos].perform_jump(move_sequence[0])
-      new_board[self.pos].perform_slide(move_sequence[0])
+      return true if (board_type[self.pos].perform_jump(move_sequence[0]) ||
+      board_type[self.pos].perform_slide(move_sequence[0]))
+      return false
     else
-      start_pos = self.pos
-      # p "start_pos #{start_pos}"
+
+      @start_pos = self.pos
       move_sequence.each do |move|
-        # p "move #{move}"
-        # p "start_pos2 #{start_pos}"
-        return false unless new_board[start_pos].perform_jump(move)
-        start_pos = move
-        # p "start_pos3 #{start_pos}"
+        return false unless board_type[@start_pos].perform_jump(move)
+        @start_pos = move
       end
     end
-
+    true
   end
 
   def valid_move_seq?(move_sequence)
-    new_board = board.dup
-    perform_moves!(move_sequence, new_board)
+    dup_board = board.dup
+    perform_moves!(move_sequence, dup_board)
   end
 
   def forward_direction
@@ -82,19 +80,30 @@ class Piece
     check_pos.all? { |el| el.between?(0, 7)}
   end
 
-  def maybe_promote(pos)
-    @king = true if (pos[0] == 0 && color == :white)
+  def perform_moves(move_sequence, board)
 
-    @king = true if (pos[0] == 7 && color == :black)
+    if valid_move_seq?(move_sequence)
+      perform_moves!(move_sequence, board)
+      true
+    else
+      false
+    end
+  end
+
+  def maybe_promote(pos)
+    @king = true if (pos[0] == 0 && color == :black)
+
+    @king = true if (pos[0] == 7 && color == :white)
   end
 
   def to_s
+    return "K" if king
     return "W" if color == :white
     return "B" if color == :black
   end
 
   def deltas
-    [[forward_direction, 1], [forward_direction, -1]]
+    king ? [[1,1], [1,-1], [-1,-1], [-1,1]] : [[forward_direction, 1], [forward_direction, -1]]
   end
 
 end

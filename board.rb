@@ -9,15 +9,24 @@ class Board
   end
 
   def populate_grid
-    [0,2,6].each do |x_coord|
+    [0,2].each do |x_coord|
       [1,3,5,7].each do |y_coord|
-        self[[x_coord, y_coord]] = Piece.new(self, [x_coord, y_coord])
+        self[[x_coord, y_coord]] = Piece.new(self, [x_coord, y_coord], :white)
       end
     end
 
-    [1,5,7].each do |x_coord|
+    [0,2,4,6].each do |y_coord|
+      self[[1, y_coord]] = Piece.new(self, [1, y_coord], :white)
+    end
+
+    [1,3,5,7].each do |y_coord|
+      self[[6, y_coord]] = Piece.new(self, [6, y_coord], :black)
+    end
+
+
+    [5,7].each do |x_coord|
       [0,2,4,6].each do |y_coord|
-        self[[x_coord, y_coord]] = Piece.new(self, [x_coord, y_coord])
+        self[[x_coord, y_coord]] = Piece.new(self, [x_coord, y_coord], :black)
       end
     end
     nil
@@ -41,8 +50,9 @@ class Board
   end
 
   def display
-    grid.each do |row|
-      puts row.join(" ")
+    puts "  0 1 2 3 4 5 6 7"
+    grid.each_with_index do |row, idx|
+      puts idx.to_s + " " + row.join(" ")
     end
     nil
   end
@@ -55,9 +65,9 @@ class Board
     new_board = Board.new
 
     pieces.each do |piece|
-      new_board[piece.pos] = Piece.new(new_board, piece.pos)
+      new_board[piece.pos] = Piece.new(new_board, piece.pos, piece.color)
     end
-    
+
     new_board
   end
 
