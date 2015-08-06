@@ -12,51 +12,43 @@ class Piece
     @king = false
   end
 
-  # def [](pos)
-  #   x, y = pos
-  #   board.grid[x][y]
-  # end
-  #
-  # def []=(pos, value)
-  #   x, y = pos
-  #   board.grid[x][y] = value
-  # end
-
   def perform_slide(end_pos)
     x, y = pos
-    pos_moves = nil
+    pos_move = nil
 
     deltas.each do |delta|
       check_pos = [delta[0] + x, delta[1] + y]
-      pos_moves = check_pos if check_pos == end_pos
+      pos_move = check_pos if check_pos == end_pos
     end
 
-    return false if pos_moves.nil?
+    return false if pos_move.nil?
     return false unless board[end_pos].nil?
 
     board.move(self.pos, end_pos)
     maybe_promote(end_pos)
 
-    return true
-    
+    true
   end
 
   def perform_jump(end_pos)
     x, y = pos
+    pos_move = nil
+    jumped_pos = nil
+
     deltas.each do |delta|
       check_pos = [(delta[0] * 2) + x, (delta[1] * 2) + y]
-      jumped_pos = [delta[0] + x, delta[1] + y]
-
-      next if !valid?(check_pos) || check_pos != end_pos
-      if board[end_pos].nil? && board[jumped_pos].color != color
-        board.move(self.pos, end_pos)
-        board[jumped_pos] = nil
-        maybe_promote(end_pos)
-        return
-      end
+      jumped_pos = [delta[0] + x, delta[1] + y] if check_pos == end_pos
+      pos_move = check_pos if check_pos == end_pos
     end
-    false
-    #raise "Cannot perform this move"
+
+    return false if pos_move.nil?
+    return false unless board[end_pos].nil? && board[jumped_pos].color != color
+
+    board.move(self.pos, end_pos)
+    board[jumped_pos] = nil
+    maybe_promote(end_pos)
+
+    true
   end
 
   def forward_direction
