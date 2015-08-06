@@ -12,48 +12,51 @@ class Piece
     @king = false
   end
 
-  # def color=(color)
-  #   pos[0].between?(0,3) ? :white : :black
+  # def [](pos)
+  #   x, y = pos
+  #   board.grid[x][y]
   # end
-
-  def [](pos)
-    x, y = pos
-    board.grid[x][y]
-  end
-
-  def []=(pos, value)
-    x, y = pos
-    board.grid[x][y] = value
-  end
+  #
+  # def []=(pos, value)
+  #   x, y = pos
+  #   board.grid[x][y] = value
+  # end
 
   def perform_slide(end_pos)
     x, y = pos
-    [[forward_direction, 1], [forward_direction, -1]].each do |delta|
-      check_pos = [delta[0] + x, delta[1] + y]
-      if valid?(check_pos) && check_pos == end_pos && self[end_pos].nil?
-        board.move(self.pos, end_pos)
-        maybe_promote(end_pos)
-        return
-      end
+    pos_moves = nil
 
+    deltas.each do |delta|
+      check_pos = [delta[0] + x, delta[1] + y]
+      pos_moves = check_pos if check_pos == end_pos
     end
-    raise "Cannot perform this move"
+
+    return false if pos_moves.nil?
+    return false unless board[end_pos].nil?
+
+    board.move(self.pos, end_pos)
+    maybe_promote(end_pos)
+
+    return true
+    
   end
 
   def perform_jump(end_pos)
     x, y = pos
-    [[forward_direction, 1], [forward_direction, -1]].each do |delta|
-      check_pos = [(delta[0] * 2) + x, (delta[1]*2) + y]
+    deltas.each do |delta|
+      check_pos = [(delta[0] * 2) + x, (delta[1] * 2) + y]
       jumped_pos = [delta[0] + x, delta[1] + y]
-      next if !valid?(check_pos)
-      if check_pos == end_pos && (self[end_pos].nil? && self[jumped_pos].color != color)
+
+      next if !valid?(check_pos) || check_pos != end_pos
+      if board[end_pos].nil? && board[jumped_pos].color != color
         board.move(self.pos, end_pos)
-        self[jumped_pos] = nil
+        board[jumped_pos] = nil
         maybe_promote(end_pos)
         return
       end
     end
-    raise "Cannot perform this move"
+    false
+    #raise "Cannot perform this move"
   end
 
   def forward_direction
@@ -65,9 +68,9 @@ class Piece
   end
 
   def maybe_promote(pos)
-    @king if (pos[0] == 0 && color == :white)
+    @king = true if (pos[0] == 0 && color == :white)
 
-    @king if (pos[0] == 7 && color == :black)
+    @king = true if (pos[0] == 7 && color == :black)
   end
 
   def to_s
@@ -75,5 +78,8 @@ class Piece
     return "B" if color == :black
   end
 
+  def deltas
+    [[forward_direction, 1], [forward_direction, -1]]
+  end
 
 end

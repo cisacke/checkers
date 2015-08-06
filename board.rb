@@ -1,9 +1,12 @@
+require_relative 'pieces'
+
 class Board
 
   attr_reader :grid
 
   def initialize
     @grid = Array.new(8) { Array.new(8) }
+    populate_grid
   end
 
   def populate_grid
@@ -52,3 +55,7 @@ class NilClass
     "-"
   end
 end
+#
+# b = Board.new
+# b.populate_grid
+# b.display
